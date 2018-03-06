@@ -1,0 +1,13 @@
+_BAK_
+.DS_Store
+ftp
+pdf
+php_errorlog
+wp-content/debug.log
+.listing
+wp-content/updraft
+wp-content/upgrade
+wp-content/uploads
+wp-content/wfcache
+wp-content/wflogs
+wp-config-local.php
