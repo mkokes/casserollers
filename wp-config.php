@@ -34,6 +34,8 @@ define('SECURE_AUTH_SALT', '$RFEPB,I-i6#A7U0Bf# .>3}ko:9WSf^g=%<SWl!u|T<;T~s`{.9
 define('LOGGED_IN_SALT',   'm!pguAd:qL*rzEb[*Q:d;OCWmc[:)/.Q9Z[|uao!+i+zeVE;o/U395dO,+.Wc.]J');
 define('NONCE_SALT',       'TX{Lf,>/j#^SZ;]=>+KE5~$D(RvN18_ks5!-5x0T1cnu+0D]..mCvcbU 5_e|Z@>');
 
+
+    
 $table_prefix = 'ca_';
 
 if ( ! defined( 'ABSPATH' ) )
