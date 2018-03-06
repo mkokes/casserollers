@@ -34,15 +34,7 @@ define('SECURE_AUTH_SALT', 'cEIUDfWURNErd9QI40sghCZbNdQ3KqAlm+gF1EUhqIH+iM4DKMVc
 define('LOGGED_IN_SALT',   'iCmiZRhhAgqbTyeoe1+SiNoSxcV0qnIhV76b2+i+0OTtQVSDAeU4Jpz0Ea0WBA4fgchK5/1UkimyPfBkUha2Gw==');
 define('NONCE_SALT',       'A0QpStQ/FhJDETAqbOXuJSmSsgav7pcnyWLuITjsns0BgQU8KPQ6MeVZaSF6B0+kNbrJt/3hzqef1/fPknhGTA==');
 
-/**
- * WordPress Database Table prefix.
- *
- * You can have multiple installations in one database if you give each
- * a unique prefix. Only numbers, letters, and underscores please!
- */
 $table_prefix = 'ca_';
-
-
 
 if ( ! defined( 'ABSPATH' ) )
 	define( 'ABSPATH', dirname( __FILE__ ) . '/' );
