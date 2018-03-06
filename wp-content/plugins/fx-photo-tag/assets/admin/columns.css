@@ -1,0 +1,10 @@
+.manage-column.column-thumbnail{
+	width: 80px;
+}
+.fx-photo-tag-thumbnail img{
+	max-width: 100%;
+	height: auto;
+}
+.manage-column.column-shortcode{
+	max-width: 200px;
+}

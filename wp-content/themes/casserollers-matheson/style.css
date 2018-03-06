@@ -1,0 +1,26 @@
+/*
+Theme Name: Casserollers - Matheson
+Template: matheson
+Author: Marty Kokes
+Version: 1.0
+Updated: 2014-11-07 10:01:44
+*/
+
+@charset "UTF-8";
+@import url('../matheson/style.css');
+
+.site-title a {
+	font-family: 'Mr Dafoe', cursive;
+}
+.nav-tabs-justified>.active>a,.nav-tabs-justified>.active>a:hover,.nav-tabs-justified>.active>a:focus {
+    border: none;
+}
+.copyright {
+	text-align: center;
+}
+.basic a {
+  color: #791315;
+}
+.basic a:hover {
+  color: #ab6163;
+}
