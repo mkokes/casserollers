@@ -1,6 +1,17 @@
 <?php
 
 class wfCredentialsController {
+	const UNCACHED = 'uncached';
+	const NOT_LEAKED = 'not-leaked';
+	const LEAKED = 'leaked';
+	
+	/**
+	 * Queries the API and returns whether or not the password exists in the breach database.
+	 * 
+	 * @param string $login
+	 * @param string $password
+	 * @return bool
+	 */
 	public static function isLeakedPassword($login, $password) {
 		$sha1 = strtoupper(hash('sha1', $password));
 		$prefix = substr($sha1, 0, 5);
@@ -28,6 +39,96 @@ class wfCredentialsController {
 				if (hash_equals($sha1, $teshSHA1)) {
 					return true;
 				}
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Returns the transient key for the given user.
+	 * 
+	 * @param WP_User $user
+	 * @return string
+	 */
+	protected static function _cachedCredentialStatusKey($user) {
+		$key = 'wfcredentialstatus_' . $user->ID;
+		return $key;
+	}
+	
+	/**
+	 * Returns the cached credential status for the given user: self::UNCACHED, self::NOT_LEAKED, or self::LEAKED.
+	 * 
+	 * @param WP_User $user
+	 * @return string
+	 */
+	public static function cachedCredentialStatus($user) {
+		$key = self::_cachedCredentialStatusKey($user);
+		$value = get_transient($key);
+		if ($value === false) {
+			return self::UNCACHED;
+		}
+		else if ($value) {
+			return self::LEAKED;
+		}
+		return self::NOT_LEAKED;
+	}
+	
+	/**
+	 * Stores a cached leak value for the given user.
+	 * 
+	 * @param WP_User $user
+	 * @param bool $isLeaked
+	 */
+	public static function setCachedCredentialStatus($user, $isLeaked) {
+		$key = self::_cachedCredentialStatusKey($user);
+		set_transient($key, $isLeaked ? 1 : 0, 3600);
+	}
+	
+	/**
+	 * Clears the cache for the given user.
+	 * 
+	 * @param WP_User $user
+	 */
+	public static function clearCachedCredentialStatus($user) {
+		$key = self::_cachedCredentialStatusKey($user);
+		delete_transient($key);
+	}
+	
+	/**
+	 * Returns whether or not we've seen a successful login from $ip for the given user.
+	 * 
+	 * @param WP_User $user
+	 * @param string $ip
+	 * @return bool
+	 */
+	public static function hasPreviousLoginFromIP($user, $ip) {
+		global $wpdb;
+		$table_wfLogins = wfDB::networkTable('wfLogins');
+		
+		$id = property_exists($user, 'ID') ? $user->ID : 0;
+		if ($id == 0) {
+			return false;
+		}
+		
+		$result = $wpdb->get_row($wpdb->prepare("SELECT id FROM {$table_wfLogins} WHERE action = 'loginOK' AND userID = %d AND IP = %s", $id, wfUtils::inet_pton($ip)), ARRAY_A);
+		if (is_array($result)) {
+			return true;
+		}
+		
+		$lastAdminLogin = wfConfig::get_ser('lastAdminLogin');
+		if (is_array($lastAdminLogin) && isset($lastAdminLogin['userID']) && isset($lastAdminLogin['IP'])) {
+			if ($lastAdminLogin['userID'] == $id && wfUtils::inet_pton($lastAdminLogin['IP']) == wfUtils::inet_pton($ip)) {
+				return true;
+			}
+			return false;
+		}
+		
+		//Final check -- if the IP recorded at plugin activation matches, let it through. This is __only__ checked when we don't have any other record of an admin login.
+		$activatingIP = wfConfig::get('activatingIP');
+		if (wfUtils::isValidIP($activatingIP)) {
+			if (wfUtils::inet_pton($activatingIP) == wfUtils::inet_pton($ip)) {
+				return true;
 			}
 		}
 		

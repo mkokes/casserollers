@@ -27,7 +27,7 @@ if (isset($_GET['source']) && wfPage::isValidPage($_GET['source'])) {
 
 			//Hash-based option block linking
 			if (window.location.hash) {
-				var hashes = window.location.hash.split('#');
+				var hashes = WFAD.parseHashes();
 				var hash = hashes[hashes.length - 1];
 				var block = $('.wf-block[data-persistence-key="' + hash + '"]');
 				if (block.length) {
@@ -126,7 +126,7 @@ if (isset($_GET['source']) && wfPage::isValidPage($_GET['source'])) {
 				'wf-option-loginSec-disableAuthorScan' => __('Prevent discovery of usernames through "/?author=N" scans, the oEmbed API, and the WordPress REST API', 'wordfence'),
 				'wf-option-other-blockBadPOST' => __('Block IPs who send POST requests with blank User-Agent and Referer', 'wordfence'),
 				'wf-option-other-pwStrengthOnUpdate' => __('Check password strength on profile update', 'wordfence'),
-				'wf-option-other-WFNet' => __('Participate in the Real-Time WordPress Security Network', 'wordfence'),
+				'wf-option-other-WFNet' => __('Participate in the Real-Time Wordfence Security Network', 'wordfence'),
 				'wf-option-firewallEnabled' => __('Enable Rate Limiting and Advanced Blocking', 'wordfence'),
 				'wf-option-blockFakeBots' => __('Immediately block fake Google crawlers', 'wordfence'),
 				'wf-option-neverBlockBG' => __('How should we treat Google\'s crawlers', 'wordfence'),
@@ -206,6 +206,9 @@ wf-option-cbl-bypassViewURL' => __('If user who is allowed to access the site vi
 <?php
 if (wfOnboardingController::shouldShowAttempt3()) {
 	echo wfView::create('onboarding/banner')->render();
+}
+else if (wfConfig::get('touppPromptNeeded')) {
+	echo wfView::create('gdpr/banner')->render();
 }
 ?>
 <div class="wrap wordfence">

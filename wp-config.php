@@ -1,8 +1,10 @@
 <?php
 
-if (file_exists(dirname(__FILE__) . '/wp-config-local.php')) {
-	require_once(dirname(__FILE__) . '/wp-config-local.php');
+// For  Local Development use a wp-config-local.php file
+if ( file_exists( dirname( __FILE__ ) . '/wp-config-local.php' ) && ! isset( $_ENV['PANTHEON_ENVIRONMENT'] ) ) {
+    require_once( dirname( __FILE__ ) . '/wp-config-local.php');
 } else {
+    // If no Pantheon or wp-config-local.php use these credentials
     define('DB_NAME', 'casserollers_wp');
     define('DB_USER', 'casserollers_sa');
     define('DB_PASSWORD', 'X5z0GX.j7VJYK@5#hb^rjP*zpuLCSzi_');
@@ -10,35 +12,40 @@ if (file_exists(dirname(__FILE__) . '/wp-config-local.php')) {
     define('DB_CHARSET', 'utf8');
     define('DB_COLLATE', '');
 
-    define('WP_DEBUG', false);
-    define('WP_DEBUG_LOG', false);
-    define('WP_DEBUG_DISPLAY', false);
+    // Generate new salt here https://api.wordpress.org/secret-key/1.1/salt/
+    define('AUTH_KEY',         '>x>7pBD}90Or|QDm97#!}-fKGB4Xn`}gg++tR#PTbHipz[.;u|wz-5we)vOe5&ID');
+    define('SECURE_AUTH_KEY',  '}#gctsQYH7s-/ SQvI_g60C|G7|VL(/cQ|oNf8w-#D+Ue/,fxB o-fWqc*~!j64W');
+    define('LOGGED_IN_KEY',    '&jEIde-P!;LRN+E}ek3(i7(CQ{Y9|1M%VTJJB[i>}[EsVANvAu%oCS-1. +biGoN');
+    define('NONCE_KEY',        'fz3R92{]KXm*|P|Pne)4as+T~|!~G-Mg0j{%s|ck%798-YcD=NFLHDK:m9,};N|p');
+    define('AUTH_SALT',        '+GGluyejO1KqWkPl+pSzo$n:UC!fRxv5.PV-;RQ?g[k[N@-=am`Qc6h|a$`MmX)1');
+    define('SECURE_AUTH_SALT', ',9>DPB.mJNR>Rf^R32|H4.oL]6[~Y8-ch]A,*|/d3lk9|XvSJ>V|95&) X@N8W~#');
+    define('LOGGED_IN_SALT',   'aVOYtaD*q94q+%wlvO&|sMI+zB/R_E=U+{+Ev7Ii8^Ftmz;NS$7)98fw|+++}woG');
+    define('NONCE_SALT',       'AKg[e+|kw+I$IF9!YwLp$vSjdq4)<tOQ%C$Zb7q{zQx?{M;4Y QsYK<X>Nc+:4c!');
 
+    // Disable Wordpress/Plugin and Theme Updates
+    define( 'AUTOMATIC_UPDATER_DISABLED', true );
+    define( 'WP_AUTO_UPDATE_CORE', false );
+    define( 'DISALLOW_FILE_MODS', true );
+
+    // Turn off debug on live environment
+    define('WP_DEBUG', false);
+    define('WP_DEBUG_DISPLAY', false);
+    define('WP_DEBUG_LOG', false);
 }
 
-/**
- * Authentication Unique Keys and Salts.
- *
- * Change these to different unique phrases!
- * You can generate these using the {@link https://api.wordpress.org/secret-key/1.1/salt/ WordPress.org secret-key service}
- * You can change these at any point in time to invalidate all existing cookies. This will force all users to have to log in again.
- *
- * @since 2.6.0
- */
-define('AUTH_KEY',         '$kl[v?l;|%uI|gHw5EXi&sBXmM^Uv/]+U[e&,bZ/lkBv.jq+uM0&glDM+:O4A+,a');
-define('SECURE_AUTH_KEY',  '`$-GlOgok)reJV)(m(v,t%;,aWXYoa? +?{|_mX.2%;CbZ)>|%`}0SHlPDXXQ5b#');
-define('LOGGED_IN_KEY',    'B-8E|$?SijqeM3@&+Z)eu+n;@BGBNL^}:WG9;Fd%hJ{!8{8*edT|p#>&,~i`.s!$');
-define('NONCE_KEY',        's6tv-qP/[|fYnd*|+HRNxUl!#sBCFZ!R0:l<taC $s<nq9;+go!jjXC6<##D]~A3');
-define('AUTH_SALT',        'NsNrnuefYb,26+.2U+bX|A*Zt8t$@d$_%`J?[)|~MctdOv<#P|aVwkz+COtH,c6C');
-define('SECURE_AUTH_SALT', '$RFEPB,I-i6#A7U0Bf# .>3}ko:9WSf^g=%<SWl!u|T<;T~s`{.9F?X)-!0jB{}0');
-define('LOGGED_IN_SALT',   'm!pguAd:qL*rzEb[*Q:d;OCWmc[:)/.Q9Z[|uao!+i+zeVE;o/U395dO,+.Wc.]J');
-define('NONCE_SALT',       'TX{Lf,>/j#^SZ;]=>+KE5~$D(RvN18_ks5!-5x0T1cnu+0D]..mCvcbU 5_e|Z@>');
-
-
-    
+/* Global wp-config stuff here */
 $table_prefix = 'ca_';
 
-if ( ! defined( 'ABSPATH' ) )
-	define( 'ABSPATH', dirname( __FILE__ ) . '/' );
+define('WPLANG', '');
 
-require_once ABSPATH . 'wp-settings.php';
+if ( ! defined( 'WP_DEBUG' ) ) {
+    define('WP_DEBUG', false);
+}
+
+/* That's all, stop editing! Happy Pressing. */
+
+if ( !defined('ABSPATH') )
+	define('ABSPATH', dirname(__FILE__) . '/');
+
+/** Sets up WordPress vars and included files. */
+require_once(ABSPATH . 'wp-settings.php');
