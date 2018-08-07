@@ -468,19 +468,19 @@ class Responsive_Lightbox_Settings {
 								'type' => 'number',
 								'min' => 0,
 								'max' => 6,
-								'append' => __( 'large devices / desktops (>1200px)', 'responsive-lightbox' )
+								'append' => __( 'large devices / desktops (&ge;1200px)', 'responsive-lightbox' )
 							),
 							'columns_md' => array(
 								'type' => 'number',
 								'min' => 0,
 								'max' => 6,
-								'append' => __( 'medium devices / desktops (>992px)', 'responsive-lightbox' )
+								'append' => __( 'medium devices / desktops (&ge;992px)', 'responsive-lightbox' )
 							),
 							'columns_sm' => array(
 								'type' => 'number',
 								'min' => 0,
 								'max' => 6,
-								'append' => __( 'small devices / tablets (>768px)', 'responsive-lightbox' )
+								'append' => __( 'small devices / tablets (&ge;768px)', 'responsive-lightbox' )
 							),
 							'columns_xs' => array(
 								'type' => 'number',
@@ -745,21 +745,21 @@ class Responsive_Lightbox_Settings {
 								'min' => 0,
 								'max' => 6,
 								'default' => 4,
-								'append' => __( 'large devices / desktops (?1200px)', 'responsive-lightbox' )
+								'append' => __( 'large devices / desktops (&ge;1200px)', 'responsive-lightbox' )
 							),
 							'columns_md' => array(
 								'type' => 'number',
 								'min' => 0,
 								'max' => 6,
 								'default' => 3,
-								'append' => __( 'medium devices / desktops (?992px)', 'responsive-lightbox' )
+								'append' => __( 'medium devices / desktops (&ge;992px)', 'responsive-lightbox' )
 							),
 							'columns_sm' => array(
 								'type' => 'number',
 								'min' => 0,
 								'max' => 6,
 								'default' => 2,
-								'append' => __( 'small devices / tablets (?768px)', 'responsive-lightbox' )
+								'append' => __( 'small devices / tablets (&ge;768px)', 'responsive-lightbox' )
 							),
 							'columns_xs' => array(
 								'type' => 'number',

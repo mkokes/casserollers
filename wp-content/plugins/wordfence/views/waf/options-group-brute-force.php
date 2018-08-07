@@ -25,7 +25,7 @@ if (!isset($collapseable)) {
 					<div class="wf-block-title">
 						<strong><?php _e('Brute Force Protection', 'wordfence'); ?></strong>
 					</div>
-					<?php if ($collapseable): ?><div class="wf-block-header-action"><div class="wf-block-header-action-disclosure"></div></div><?php endif; ?>
+					<?php if ($collapseable): ?><div class="wf-block-header-action"><div class="wf-block-header-action-disclosure" role="checkbox" aria-checked="<?php echo (wfPersistenceController::shared()->isActive($stateKey) ? 'true' : 'false'); ?>" tabindex="0"></div></div><?php endif; ?>
 				</div>
 			</div>
 			<div class="wf-block-content">
@@ -49,7 +49,7 @@ if (!isset($collapseable)) {
 					</li>
 					<li>
 						<?php
-						$breakpoints = array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 100, 200, 500);
+						$breakpoints = array(2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 30, 40, 50, 100, 200, 500);
 						$options = array();
 						foreach ($breakpoints as $b) {
 							$options[] = array('value' => $b, 'label' => $b);

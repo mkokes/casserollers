@@ -25,7 +25,7 @@ if ( file_exists( dirname( __FILE__ ) . '/wp-config-local.php' ) && ! isset( $_E
     // Disable Wordpress/Plugin and Theme Updates
     define( 'AUTOMATIC_UPDATER_DISABLED', true );
     define( 'WP_AUTO_UPDATE_CORE', false );
-    define( 'DISALLOW_FILE_MODS', true );
+    define( 'DISALLOW_FILE_MODS', false );
 
     // Turn off debug on live environment
     define('WP_DEBUG', false);

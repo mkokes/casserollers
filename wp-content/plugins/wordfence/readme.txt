@@ -3,8 +3,8 @@ Contributors: mmaunder
 Tags: security, firewall, malware scanner, web application firewall, antivirus, block hackers, country blocking, clean hacked site, blacklist, waf, login security
 Requires at least: 3.9
 Requires PHP: 5.2
-Tested up to: 4.9.5
-Stable tag: 7.1.4
+Tested up to: 4.9.8
+Stable tag: 7.1.10
 
 Secure your website with the most comprehensive WordPress security plugin. Firewall, malware scan, blocking, live traffic, login security & more.
 
@@ -152,6 +152,10 @@ Providing excellent customer service is very important to us.  We offer help to 
 
 Designed for every skill level, [The WordPress Security Learning Center](https://www.wordfence.com/learn/) is dedicated to deepening users’ understanding of security best practices by providing free access to entry-level articles, in-depth articles, videos, industry survey results, graphics and more.
 
+= Where can I find the Wordfence Terms of Use and Privacy Policy? =
+
+These are available on our website: [Terms of Use](https://www.wordfence.com/terms-of-use/) and [Privacy Policy](https://www.wordfence.com/privacy-policy/)
+
 == Screenshots ==
 
 Secure your website with Wordfence. 
@@ -167,6 +171,63 @@ Secure your website with Wordfence.
 
 
 == Changelog ==
+
+= 7.1.10 =
+* Improvement: Better labeling in Live Traffic for 301 and 302 redirects.
+* Improvement: Login timestamps are now displayed in the site's configured time zone rather than UTC.
+* Improvement: Added detection and a workaround for hosts with a non-functional MySQLi interface.
+* Improvement: The prevent admin registration setting now works with WooCommerce's registration flow.
+* Improvement: For hosts with varying URL values (e.g., AWS instances), notification and alert links now correctly use the canonical admin URL.
+* Fix: Fixed a layout problem with the live traffic disabled notice.
+* Fix: The scan stage that checks "How does Wordfence get IPs?" no longer shows a warning if the call fails.
+
+= 7.1.9 =
+* Improvement: Added an "unsubscribe" link to plugin-generated alerts.
+* Improvement: Added some additional flags.
+* Change: Removed some unnecessary files from the bundled GeoIP library.
+* Change: Updated wording in the Terms of Use/Privacy Policy agreement UI.
+* Change: The minimum "Lock out after how many login failures" is now 2.
+* Change: The diagnostics report now includes the scan issues for easier debugging.
+* Fix: Multiple improvements to automatic updating to avoid broken updates on sites with low resources or slow file systems.
+* Fix: Better text wrapping in the top failed logins widget.
+* Fix: Onboarding CSS/JS is now correctly enqueued for multisite installations.
+* Fix: Fixed a missing asset with the bundled jQueryUI library.
+* Fix: Fixed memory calculation when using PHP's supported shorthand syntax.
+* Fix: Better wrapping behavior on the reason column in the blocks table.
+* Fix: Fixed an issue with an internal data structure to prevent error log entries when using mbstring functions.
+* Fix: Improved bot detection when no user agent is sent.
+
+= 7.1.8 =
+* Improvement: Better detection of removal status when uninstalling the WAF's auto-prepend file.
+* Improvement: Switched optional mailing list signup to go directly through our servers rather than a third party.
+* Fix: Fixed the dashboard erroneously showing the payment method as missing for some payment methods.
+* Fix: If a premium license is deleted from wordfence.com, the plugin will now automatically downgrade rather than get stuck in an intermediate state.
+* Fix: Changed some wording to consistently use "License" or "License Key".
+
+= 7.1.7 =
+* Improvement: Added better support for keyboard navigation of options.
+* Improvement: staging. and dev. subdomains are now supported for sharing premium licenses.
+* Improvement: Bundled our interface font to avoid loading from a remote source and reduced the pages some assets were loaded on.
+* Improvement: Added option to trim Live Traffic records after a specific number of days.
+* Improvement: Updated to the current GeoIP2 database.
+* Improvement: Extended the automatic redaction applied to attack data that may include sensitive information.
+* Change: Removed a no-longer-used API call.
+* Fix: Fixed a few options that couldn't be searched for on the all options page.
+* Fix: Activity Report emails now detect and avoid symlink loops.
+
+= 7.1.6 =
+* Fix: Added a workaround for sites with inaccessible WAF config files when reading php://input
+
+= 7.1.5 =
+* Improvement: GDPR compliance updates.
+* Improvement: The list of blocks now shows the most recently-added blocks at the top by default.
+* Improvement: Added better table status display to Diagnostics to help with debugging.
+* Improvement: Added deferred loading to Live Traffic avatars to improve performance with some plugins.
+* Improvement: The server's own IP is now automatically whitelisted for known safe requests.
+* Fix: Added a workaround to Live Traffic human/bot detection to compensate for other scripts that modify our event handlers.
+* Fix: Fixed an error with Live Traffic human/bot detection when plugins change the load order.
+* Fix: Fixed auto-enabling of some controls when pasting values.
+* Fix: Fixed an instance where http links could be generated for emails rather than https.
 
 = 7.1.4 =
 * Improvement: Added additional XSS detection capabilities.

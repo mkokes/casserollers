@@ -47,7 +47,6 @@ class Responsive_Lightbox_Galleries {
 		add_action( 'wp_ajax_rl-get-gallery-page-content', array( $this, 'get_gallery_page' ) );
 		add_action( '_wp_put_post_revision', array( $this, 'save_revision' ) );
 		add_action( 'shutdown', array( $this, 'shutdown_preview' ) );
-		// add_action( 'wp_ajax_rl-get-query-args', array( $this, 'get_query_args' ) );
 
 		// filters
 		add_filter( 'manage_rl_gallery_posts_columns', array( $this, 'gallery_columns' ) );
@@ -1397,8 +1396,6 @@ class Responsive_Lightbox_Galleries {
 	 * @return array
 	 */
 	public function get_gallery_images( $gallery_id = 0, $args = array() ) {
-		global $pagenow;
-
 		$images = array();
 		$excluded = array();
 
@@ -1446,10 +1443,11 @@ class Responsive_Lightbox_Galleries {
 			}
 		}
 
+		global $pagenow;
+
 		// is it preview?
-		if ( ( in_array( $pagenow, array( 'post.php', 'post-new.php' ), true ) && $gallery_id ) || ( isset( $_POST['action'] ) && $_POST['action'] === 'rl-get-preview-content' ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['action'] ) && $_POST['action'] === 'rl-post-gallery-preview' ) ) {
+		if ( ( in_array( $pagenow, array( 'post.php', 'post-new.php' ), true ) && $gallery_id ) || ( isset( $_POST['action'] ) && $_POST['action'] === 'rl-get-preview-content' ) || ( defined( 'DOING_AJAX' ) && DOING_AJAX && isset( $_POST['action'] ) && ( $_POST['action'] === 'rl-post-gallery-preview' || $_POST['action'] === 'rl-get-menu-content' ) ) )
 			$args['images_per_page'] = 0;
-		}
 
 		if ( isset( $_GET['rl_page'] ) )
 			$args['page'] = (int) $_GET['rl_page'];
@@ -2310,49 +2308,6 @@ class Responsive_Lightbox_Galleries {
 		}
 
 		return apply_filters( 'rl_get_gallery_query_attachments', $attachments, $posts, $args );
-	}
-
-	/**
-	 * Get query arguments based on type.
-	 *
-	 * @return string Encoded JSON with values
-	 */
-	public function get_query_args() {
-		// if ( isset( $_GET['type'], $_GET['nonce'], $_GET['search'], $_GET['page'] ) && check_ajax_referer( 'rl-gallery', 'nonce', false ) ) {
-		if ( isset( $_POST['type'], $_POST['post_id'], $_POST['nonce'] ) && check_ajax_referer( 'rl-gallery', 'nonce', false ) ) {
-			$data = $this->prepare_query_args( $_POST['type'] );
-			$html = '';
-
-			if ( ! empty( $data ) ) {
-				$images = get_post_meta( (int) $_POST['post_id'], '_rl_images', true );
-
-				if ( isset( $images['featured'], $images['featured'][$_POST['type']] ) ) {
-					$selected = $images['featured'][$_POST['type']];
-				} else
-					$selected = array();
-
-				if ( $_POST['type'] === 'post_term' ) {
-					foreach ( $data as $taxanomy => $group ) {
-						$html .= '<optgroup label="' . esc_attr( $group['label'] ) . '">';
-
-						foreach ( $group['terms'] as $term_id => $name ) {
-							$html .= '<option value="' . $term_id . '" ' . selected( in_array( $term_id, $selected, false ), true, false ) . '>' . esc_html( $name ) . '</option>';
-						}
-
-						$html .= '</optgroup>';
-					}
-				} else {
-					foreach ( $data as $key => $label ) {
-						$html .= '<option value="' . $key . '" ' . selected( in_array( $key, $selected, false ), true, false ) . '>' . $label . '</option>';
-					}
-				}
-			}
-
-			wp_send_json_success( array( 'html' => $html ) );
-		} else
-			wp_send_json_error();
-
-		exit;
 	}
 
 	/**

@@ -148,6 +148,7 @@ class wfConfig {
 			'alert_maxHourly' => array('value' => 0, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_INT)), 
 			'loginSec_userBlacklist' => array('value' => '', 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_STRING)),
 			'liveTraf_maxRows' => array('value' => 2000, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_INT)),
+			'liveTraf_maxAge' => array('value' => 30, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_INT)),
 			"neverBlockBG" => array('value' => "neverBlockVerified", 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_STRING)),
 			"loginSec_countFailMins" => array('value' => 240, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_INT)),
 			"loginSec_lockoutMins" => array('value' => 240, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_INT)),
@@ -216,6 +217,7 @@ class wfConfig {
 			'supportHash' => array('value' => '', 'autoload' => self::DONT_AUTOLOAD, 'validation' => array('type' => self::TYPE_STRING)),
 			'touppPromptNeeded' => array('value' => false, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
 			'touppBypassNextCheck' => array('value' => false, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_BOOL)),
+			'autoUpdateAttempts' => array('value' => 0, 'autoload' => self::AUTOLOAD, 'validation' => array('type' => self::TYPE_INT)),
 		),
 	);
 	public static $serializedOptions = array('lastAdminLogin', 'scanSched', 'emailedIssuesList', 'wf_summaryItems', 'adminUserList', 'twoFactorUsers', 'alertFreqTrack', 'wfStatusStartMsgs', 'vulnerabilities_plugin', 'vulnerabilities_theme', 'dashboardData', 'malwarePrefixes', 'coreHashes', 'noc1ScanSchedule', 'allScansScheduled', 'disclosureStates', 'scanStageStatuses', 'adminNoticeQueue');
@@ -250,6 +252,7 @@ class wfConfig {
 			}
 		}
 		self::set('encKey', substr(wfUtils::bigRandomHex(), 0, 16));
+		self::set('longEncKey', bin2hex(wfWAFUtils::random_bytes(32)));
 		if (self::get('maxMem', false) === false) {
 			self::set('maxMem', '256');
 		}
@@ -509,6 +512,29 @@ class wfConfig {
 		return (int) self::get($key, $default, $allowCached);
 	}
 	
+	/**
+	 * Runs a test against the database to verify set_ser is working via MySQLi.
+	 * 
+	 * @return bool
+	 */
+	public static function testDB() {
+		$nonce = bin2hex(wfWAFUtils::random_bytes(32));
+		$payload = array('nonce' => $nonce);
+		$allow = wfConfig::get('allowMySQLi', true);
+		wfConfig::set('allowMySQLi', true);
+		wfConfig::set_ser('dbTest', $payload, false, wfConfig::DONT_AUTOLOAD);
+		
+		$stored = wfConfig::get_ser('dbTest', false, false);
+		wfConfig::set('allowMySQLi', $allow);
+		$result = false;
+		if (is_array($stored) && isset($stored['nonce']) && hash_equals($nonce, $stored['nonce'])) {
+			$result = true;
+		}
+		
+		wfConfig::delete_ser_chunked('dbTest');
+		return $result;
+	}
+	
 	private static function canCompressValue() {
 		if (!function_exists('gzencode') || !function_exists('gzdecode')) {
 			return false;
@@ -621,7 +647,7 @@ class wfConfig {
 		
 		global $wpdb;
 		$dbh = $wpdb->dbh;
-		$useMySQLi = (is_object($dbh) && $wpdb->use_mysqli);
+		$useMySQLi = (is_object($dbh) && $wpdb->use_mysqli && wfConfig::get('allowMySQLi', true));
 		
 		if (!self::$tableExists) {
 			return;
@@ -882,22 +908,51 @@ class wfConfig {
 		return $result;
 	}
 	public static function autoUpdate(){
-		try {
-			if (!wfConfig::get('other_bypassLitespeedNoabort', false) && getenv('noabort') != '1' && stristr($_SERVER['SERVER_SOFTWARE'], 'litespeed') !== false) {
-				$lastEmail = self::get('lastLiteSpdEmail', false);
-				if( (! $lastEmail) || (time() - (int)$lastEmail > (86400 * 30))){
-					self::set('lastLiteSpdEmail', time());
-					 wordfence::alert("Wordfence Upgrade not run. Please modify your .htaccess", "To preserve the integrity of your website we are not running Wordfence auto-update.\n" .
-						"You are running the LiteSpeed web server which has been known to cause a problem with Wordfence auto-update.\n" .
-						"Please go to your website now and make a minor change to your .htaccess to fix this.\n" .
-						"You can find out how to make this change at:\n" .
-						 wfSupportController::supportURL(wfSupportController::ITEM_DASHBOARD_OPTION_LITESPEED_WARNING) . "\n" .
-						"\nAlternatively you can disable auto-update on your website to stop receiving this message and upgrade Wordfence manually.\n",
-						'127.0.0.1'
-						);
-				}
-				return;
+		if (!wfConfig::get('other_bypassLitespeedNoabort', false) && getenv('noabort') != '1' && stristr($_SERVER['SERVER_SOFTWARE'], 'litespeed') !== false) {
+			$lastEmail = self::get('lastLiteSpdEmail', false);
+			if( (! $lastEmail) || (time() - (int)$lastEmail > (86400 * 30))){
+				self::set('lastLiteSpdEmail', time());
+				wordfence::alert("Wordfence Upgrade not run. Please modify your .htaccess", "To preserve the integrity of your website we are not running Wordfence auto-update.\n" .
+					"You are running the LiteSpeed web server which has been known to cause a problem with Wordfence auto-update.\n" .
+					"Please go to your website now and make a minor change to your .htaccess to fix this.\n" .
+					"You can find out how to make this change at:\n" .
+					wfSupportController::supportURL(wfSupportController::ITEM_DASHBOARD_OPTION_LITESPEED_WARNING) . "\n" .
+					"\nAlternatively you can disable auto-update on your website to stop receiving this message and upgrade Wordfence manually.\n",
+					'127.0.0.1'
+				);
 			}
+			return;
+		}
+		
+		$runUpdate = false;
+		wp_update_plugins();
+		$update_plugins = get_site_transient('update_plugins');
+		if ($update_plugins && is_array($update_plugins->response) && isset($update_plugins->response[WORDFENCE_BASENAME])) {
+			$status = $update_plugins->response[WORDFENCE_BASENAME];
+			if (is_object($status) && property_exists($status, 'new_version')) {
+				$runUpdate = (version_compare($status->new_version, WORDFENCE_VERSION) > 0);
+			}
+		}
+		
+		if ($runUpdate) {
+			try {
+				$api = new wfAPI(wfConfig::get('apiKey'), wfUtils::getWPVersion());
+				$response = $api->call('should_auto_update', array(), array('currentVersion' => WORDFENCE_VERSION));
+				if (!(is_array($response) && isset($response['ok']) && wfUtils::truthyToBoolean($response['ok']))) {
+					$runUpdate = false;
+				}
+			}
+			catch (Exception $e) {
+				wfConfig::inc('autoUpdateAttempts');
+				$runUpdate = false;
+			}
+		}
+		
+		if (!$runUpdate && wfConfig::get('autoUpdateAttempts') < 7) {
+			return;
+		}
+		
+		try {
 			require_once(ABSPATH . 'wp-admin/includes/class-wp-upgrader.php');
 			require_once(ABSPATH . 'wp-admin/includes/misc.php');
 			/* We were creating show_message here so that WP did not write to STDOUT. This had the strange effect of throwing an error about redeclaring show_message function, but only when a crawler hit the site and triggered the cron job. Not a human. So we're now just require'ing misc.php which does generate output, but that's OK because it is a loopback cron request.  
@@ -915,7 +970,6 @@ class wfConfig {
 				return;
 			}
 			
-			wp_update_plugins();
 			ob_start();
 			$upgrader = new Plugin_Upgrader();
 			$upret = $upgrader->upgrade(WORDFENCE_BASENAME);
@@ -924,6 +978,7 @@ class wfConfig {
 				if(wfConfig::get('alertOn_update') == '1' && preg_match('/Version: (\d+\.\d+\.\d+)/', $cont, $matches) ){
 					wordfence::alert("Wordfence Upgraded to version " . $matches[1], "Your Wordfence installation has been upgraded to version " . $matches[1], '127.0.0.1');
 				}
+				wfConfig::set('autoUpdateAttempts', 0);
 			}
 			$output = @ob_get_contents();
 			@ob_end_clean();
@@ -1312,6 +1367,12 @@ Options -ExecCGI
 					$saved = true;
 					break;
 				}
+				case 'avoid_php_input':
+				{
+					$wafConfig->setConfig($key, wfUtils::truthyToInt($value));
+					$saved = true;
+					break;
+				}
 				
 				//============ Plugin (specialty treatment)
 				case 'alertEmails':
@@ -1496,6 +1557,11 @@ Options -ExecCGI
 					$saved = true;
 					break;
 				}
+				case 'liveTraf_maxAge':
+				{
+					$value = max(1, $value);
+					break;
+				}
 				
 				//Scan scheduling
 				case 'scanSched':
@@ -1557,7 +1623,7 @@ Options -ExecCGI
 					}
 				}
 				catch (Exception $e) {
-					throw new wfConfigException(__('Your options have been saved, but you left your API key blank, so we tried to get you a free API key from the Wordfence servers. There was a problem fetching the free key: ', 'wordfence') . wp_kses($e->getMessage(), array()));
+					throw new wfConfigException(__('Your options have been saved, but you left your license key blank, so we tried to get you a free license key from the Wordfence servers. There was a problem fetching the free key: ', 'wordfence') . wp_kses($e->getMessage(), array()));
 				}
 			}
 			else if ($existingAPIKey != $apiKey) { //Key changed, try activating
@@ -1578,7 +1644,7 @@ Options -ExecCGI
 					}
 				}
 				catch (Exception $e) {
-					throw new wfConfigException(__('Your options have been saved. However we noticed you changed your API key, and we tried to verify it with the Wordfence servers but received an error: ', 'wordfence') . wp_kses($e->getMessage(), array()));
+					throw new wfConfigException(__('Your options have been saved. However we noticed you changed your license key, and we tried to verify it with the Wordfence servers but received an error: ', 'wordfence') . wp_kses($e->getMessage(), array()));
 				}
 			}
 			else { //Key unchanged, just ping it
@@ -1607,7 +1673,7 @@ Options -ExecCGI
 					wfConfig::set('keyType', $keyType);
 				}
 				catch (Exception $e){
-					throw new wfConfigException(__('Your options have been saved. However we tried to verify your API key with the Wordfence servers and received an error: ', 'wordfence') . wp_kses($e->getMessage(), array()));
+					throw new wfConfigException(__('Your options have been saved. However we tried to verify your license key with the Wordfence servers and received an error: ', 'wordfence') . wp_kses($e->getMessage(), array()));
 				}
 			}
 		}
@@ -1773,6 +1839,7 @@ Options -ExecCGI
 					'liveTraf_ignoreIPs',
 					'liveTraf_ignoreUA',
 					'liveTraf_maxRows',
+					'liveTraf_maxAge',
 					'displayTopLevelLiveTraffic',
 				);
 				break;
@@ -1926,6 +1993,7 @@ Options -ExecCGI
 					'liveTraf_ignoreIPs',
 					'liveTraf_ignoreUA',
 					'liveTraf_maxRows',
+					'liveTraf_maxAge',
 					'displayTopLevelLiveTraffic',
 					'other_noAnonMemberComments',
 					'other_scanComments',

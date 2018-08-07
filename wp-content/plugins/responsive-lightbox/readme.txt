@@ -3,8 +3,8 @@ Contributors: dfactory
 Donate link: http://www.dfactory.eu/
 Tags: gallery, images, lightbox, photos, theme, photo, image, picture, slideshow, modal, overlay, video
 Requires at least: 4.0
-Tested up to: 4.9.5
-Stable tag: 2.0.4
+Tested up to: 4.9.6
+Stable tag: 2.0.5
 Requires PHP: 5.2.4
 License: MIT License
 License URI: http://opensource.org/licenses/MIT
@@ -77,6 +77,12 @@ No questions yet.
 2. screenshot-2.jpg
 
 == Changelog ==
+
+= 2.0.5 =
+* Fix: Escaped characters on titles and descriptions
+* Fix: Gallery shortcode not accepting image order
+* Fix: Gallery using default parameters instead of the settings
+* Fix: PHP fatal error if gallery builder is disabled
 
 = 2.0.4 =
 * Fix: Gallery sorting and orderby not working
@@ -351,7 +357,8 @@ Initial release
 
 == Upgrade Notice ==
 
-= 2.0.4 =
-* Fix: Gallery sorting and orderby not working
-* Fix: Slow db query on post edit screen
-* Fix: WooCommerce gallery undefined method for get_gallery_image_ids
+= 2.0.5 =
+* Fix: Escaped characters on titles and descriptions
+* Fix: Gallery shortcode not accepting image order
+* Fix: Gallery using default parameters instead of the settings
+* Fix: PHP fatal error if gallery builder is disabled

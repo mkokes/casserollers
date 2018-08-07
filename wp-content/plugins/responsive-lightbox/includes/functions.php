@@ -73,7 +73,10 @@ function rl_get_gallery_fields_atts( $fields, $shortcode_atts, $gallery = true )
  * @return array Gallery images
  */
 function rl_get_gallery_images( $gallery_id, $args ) {
-	return Responsive_Lightbox()->galleries->get_gallery_images( $gallery_id, $args );
+	if ( did_action( 'init' ) )
+		return Responsive_Lightbox()->galleries->get_gallery_images( $gallery_id, $args );
+	else
+		return array();
 }
 
 /**
