@@ -1,0 +1,22 @@
+---
+import PostEntry from './PostEntry.astro';
+import type { Post } from '../lib/site';
+
+interface Props {
+  posts: Post[];
+  prev?: string;
+  next?: string;
+}
+
+const { posts, prev, next } = Astro.props;
+---
+
+{posts.map((post) => <PostEntry post={post} />)}
+{
+  (prev || next) && (
+    <nav class="pagination" aria-label="Posts">
+      {next ? <a href={next}>&larr; Older posts</a> : <span />}
+      {prev && <a href={prev}>Newer posts &rarr;</a>}
+    </nav>
+  )
+}

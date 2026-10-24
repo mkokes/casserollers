@@ -1,0 +1,39 @@
+---
+// Posts and pages both live at the permalink WordPress gave them
+// (/2014/10/some-post/, /leftovers/itinerary/), stored as `path` in frontmatter.
+import { getCollection, render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PostEntry from '../components/PostEntry.astro';
+import { getPosts } from '../lib/site';
+
+export async function getStaticPaths() {
+  const trim = (path: string) => path.replace(/^\/|\/$/g, '');
+  const posts = (await getPosts()).map((entry) => ({
+    params: { path: trim(entry.data.path) },
+    props: { kind: 'post' as const, entry },
+  }));
+  const pages = (await getCollection('pages')).map((entry) => ({
+    params: { path: trim(entry.data.path) },
+    props: { kind: 'page' as const, entry },
+  }));
+  return [...posts, ...pages];
+}
+
+const props = Astro.props;
+const { title, excerpt } = props.entry.data;
+const image = props.kind === 'post' ? props.entry.data.featuredImage : undefined;
+const { Content } = props.kind === 'page' ? await render(props.entry) : { Content: null };
+---
+
+<Base title={title} description={excerpt} image={image}>
+  {
+    props.kind === 'post' ? (
+      <PostEntry post={props.entry} heading="h1" />
+    ) : (
+      <article class="entry">
+        <h1 class="entry-title">{title}</h1>
+        <div class="entry-content">{Content && <Content />}</div>
+      </article>
+    )
+  }
+</Base>
