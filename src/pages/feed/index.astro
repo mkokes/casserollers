@@ -1,0 +1,11 @@
+---
+// WordPress served the RSS feed at /feed/. A config redirect would append the
+// trailing slash to /feed.xml, so point feed readers at it by hand.
+---
+
+<!doctype html>
+<title>Redirecting to /feed.xml</title>
+<meta http-equiv="refresh" content="0;url=/feed.xml" />
+<meta name="robots" content="noindex" />
+<link rel="canonical" href="https://casserollers.com/feed.xml" />
+<a href="/feed.xml">Moved to /feed.xml</a>

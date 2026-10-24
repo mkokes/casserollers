@@ -1,0 +1,23 @@
+{
+  "name": "casserollers",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "import-wp": "node scripts/import-wp.mjs",
+    "check-urls": "node scripts/check-urls.mjs"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.4.2"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "turndown": "^7.2.4",
+    "turndown-plugin-gfm": "^1.0.2",
+    "typescript": "^6.0.3"
+  }
+}

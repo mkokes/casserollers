@@ -1,0 +1,53 @@
+---
+import { render } from 'astro:content';
+import { categoryName, formatDate, tagName, type Post } from '../lib/site';
+
+interface Props {
+  post: Post;
+  heading?: 'h1' | 'h2';
+}
+
+const { post, heading: Heading = 'h2' } = Astro.props;
+const { title, date, path, author, categories, tags, featuredImage } = post.data;
+const { Content } = await render(post);
+// Image-format posts often had the featured image only as post meta, not in the body.
+const showFeatured = featuredImage && !post.body?.includes(featuredImage);
+---
+
+<article class="entry">
+  <Heading class="entry-title">{Heading === 'h1' ? title : <a href={path}>{title}</a>}</Heading>
+  <p class="entry-meta">
+    {author && <>by {author} on </>}
+    <a href={path}><time datetime={date.toISOString().slice(0, 10)}>{formatDate(date)}</time></a>
+    {
+      categories.length > 0 && (
+        <>
+          {' '}in{' '}
+          {categories.map((slug, i) => (
+            <>
+              {i > 0 && ', '}
+              <a href={`/category/${slug}/`}>{categoryName(slug)}</a>
+            </>
+          ))}
+        </>
+      )
+    }
+  </p>
+  {showFeatured && <p><img src={featuredImage} alt="" loading="lazy" /></p>}
+  <div class="entry-content">
+    <Content />
+  </div>
+  {
+    tags.length > 0 && (
+      <p class="entry-tags">
+        Tags:{' '}
+        {tags.map((slug, i) => (
+          <>
+            {i > 0 && ', '}
+            <a href={`/tag/${slug}/`}>{tagName(slug)}</a>
+          </>
+        ))}
+      </p>
+    )
+  }
+</article>

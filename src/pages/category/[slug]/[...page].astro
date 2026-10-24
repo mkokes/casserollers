@@ -1,0 +1,25 @@
+---
+import Base from '../../../layouts/Base.astro';
+import PostList from '../../../components/PostList.astro';
+import { categoryName, getPosts, paginate } from '../../../lib/site';
+import terms from '../../../data/terms.json';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return terms.categories.flatMap(({ slug }) =>
+    paginate(
+      posts.filter((p) => p.data.categories.includes(slug)),
+      `/category/${slug}/`,
+    ).map((p) => ({ params: { slug, page: p.page === 1 ? undefined : `page/${p.page}` }, props: p })),
+  );
+}
+
+const { slug } = Astro.params;
+const { items, prev, next } = Astro.props;
+const name = categoryName(slug);
+---
+
+<Base title={name}>
+  <h1 class="archive-title">Category: {name}</h1>
+  <PostList posts={items} prev={prev} next={next} />
+</Base>
