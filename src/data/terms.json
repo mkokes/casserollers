@@ -1,0 +1,87 @@
+{
+  "categories": [
+    {
+      "slug": "casseroller-news",
+      "name": "Casseroller News",
+      "description": ""
+    },
+    {
+      "slug": "cornped",
+      "name": "Cornped",
+      "description": ""
+    },
+    {
+      "slug": "martys-garage",
+      "name": "Martys Garage",
+      "description": ""
+    },
+    {
+      "slug": "moar-moto",
+      "name": "MOAR MOTO",
+      "description": ""
+    },
+    {
+      "slug": "photo-of-the-week",
+      "name": "Photo of the week",
+      "description": ""
+    }
+  ],
+  "tags": [
+    {
+      "slug": "blue-cat",
+      "name": "blue cat"
+    },
+    {
+      "slug": "captured-by-robots",
+      "name": "Captured By Robots"
+    },
+    {
+      "slug": "e50",
+      "name": "e50"
+    },
+    {
+      "slug": "kromag",
+      "name": "kromag"
+    },
+    {
+      "slug": "oko",
+      "name": "oko"
+    },
+    {
+      "slug": "pedals-optional",
+      "name": "pedals optional"
+    },
+    {
+      "slug": "pinto",
+      "name": "pinto"
+    },
+    {
+      "slug": "polini",
+      "name": "polini"
+    },
+    {
+      "slug": "potw",
+      "name": "potw"
+    },
+    {
+      "slug": "puch",
+      "name": "puch"
+    },
+    {
+      "slug": "rally",
+      "name": "rally"
+    },
+    {
+      "slug": "swinger",
+      "name": "swinger"
+    },
+    {
+      "slug": "video",
+      "name": "video"
+    },
+    {
+      "slug": "weekly-rides",
+      "name": "weekly rides"
+    }
+  ]
+}
