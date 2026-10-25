@@ -1,0 +1,14 @@
+---
+// Shown by the service worker (public/sw.js) when a page isn't cached and the
+// device is offline.
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Offline" noindex>
+  <article class="entry">
+    <h1 class="entry-title">Out of gas</h1>
+    <div class="entry-content">
+      <p>You're offline and this page hasn't been saved on this device yet. Pages you've visited before still work, so try the <a href="/">home page</a>, or check back once you're connected.</p>
+    </div>
+  </article>
+</Base>
