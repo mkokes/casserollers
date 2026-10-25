@@ -25,7 +25,7 @@ const lazyImages = {
 export default defineConfig({
   site: 'https://casserollers.com',
   trailingSlash: 'always',
-  integrations: [sitemap({ filter: (page) => !/\/(feed|leftovers\/register|ruh-oh)\/$/.test(page) }), lazyImages],
+  integrations: [sitemap({ filter: (page) => !/\/(feed|offline|leftovers\/register|ruh-oh)\/$/.test(page) }), lazyImages],
   redirects: {
     '/leftovers/register': '/leftovers/',
     '/ruh-oh': '/',

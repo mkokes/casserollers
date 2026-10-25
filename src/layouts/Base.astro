@@ -6,9 +6,10 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  noindex?: boolean;
 }
 
-const { title, description = SITE_DESCRIPTION, image } = Astro.props;
+const { title, description = SITE_DESCRIPTION, image, noindex = false } = Astro.props;
 const fullTitle = title ? `${title} - ${SITE_TITLE}` : `${SITE_TITLE} - ${SITE_DESCRIPTION}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(image, Astro.site) : undefined;
@@ -22,9 +23,14 @@ const ogImage = image ? new URL(image, Astro.site) : undefined;
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href="/wp-content/uploads/2012/10/cropped-logonotext-32x32.png" sizes="32x32" />
-    <link rel="icon" href="/wp-content/uploads/2012/10/cropped-logonotext-192x192.png" sizes="192x192" />
-    <link rel="apple-touch-icon" href="/wp-content/uploads/2012/10/cropped-logonotext-180x180.png" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#791315" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content={SITE_TITLE} />
     <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/feed.xml" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta property="og:site_name" content={SITE_TITLE} />
@@ -80,6 +86,12 @@ const ogImage = image ? new URL(image, Astro.site) : undefined;
       dialog.addEventListener('click', (event) => {
         if (event.target === dialog || event.target === full) dialog.close();
       });
+
+      // Offline support and installability; see public/sw.js. Skipped in dev so
+      // cached pages don't hide local changes.
+      if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+      }
     </script>
   </body>
 </html>

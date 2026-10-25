@@ -36,6 +36,14 @@ Post body in Markdown. Put images in `public/images/` and reference them as `/im
 
 Pages (About, Leftovers, etc.) live in `src/content/pages/`, with the folder structure matching the URL. The menu and the home page intro are in `src/lib/site.ts` and `src/pages/index.astro`.
 
+## Installable app (PWA)
+
+The site can be installed to a phone's home screen and works offline for pages a visitor has already opened.
+
+- `public/manifest.webmanifest`: app name, colors and icons.
+- `public/sw.js`: the service worker. It only registers in production builds, so `npm run dev` is never served stale pages. Bump `VERSION` in it whenever you change its caching logic. Content changes don't need a bump, because pages are always fetched fresh when the device is online.
+- `public/icons/icon.svg`: the app icon. After editing it, run `npm run build-icons` to regenerate the PNGs.
+
 ## Deploying
 
 Pushing to `master` runs `.github/workflows/deploy.yml`, which builds and publishes to GitHub Pages. `public/CNAME` sets the custom domain.
@@ -48,6 +56,6 @@ Pushing to `master` runs `.github/workflows/deploy.yml`, which builds and publis
 | `public/wp-content/uploads/` | Images from WordPress, kept at their original URLs |
 | `src/pages/[...path].astro` | Renders every post and page at its `path` |
 | `src/pages/index.astro`, `page/`, `category/`, `tag/` | Home and archive listings (5 per page, like the old site) |
-| `src/layouts/Base.astro`, `src/styles/global.css` | Header, footer, lightbox, styling |
+| `src/layouts/Base.astro`, `src/styles/global.css` | Header, footer, lightbox, service worker registration, styling |
 | `scripts/import-wp.mjs` | One-time importer from the WordPress REST API (only useful while the old site is still up) |
 | `scripts/check-urls.mjs` | Build verification against `scripts/wp-urls.json` |

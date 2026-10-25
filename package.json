@@ -7,7 +7,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "import-wp": "node scripts/import-wp.mjs",
-    "check-urls": "node scripts/check-urls.mjs"
+    "check-urls": "node scripts/check-urls.mjs",
+    "build-icons": "node scripts/build-icons.mjs"
   },
   "dependencies": {
     "@astrojs/rss": "^4.0.19",
@@ -16,6 +17,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
+    "sharp": "^0.35.5",
     "turndown": "^7.2.4",
     "turndown-plugin-gfm": "^1.0.2",
     "typescript": "^6.0.3"
