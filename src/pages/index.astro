@@ -1,24 +1,28 @@
 ---
 import Base from '../layouts/Base.astro';
 import PostList from '../components/PostList.astro';
+import SocialHero from '../components/SocialHero.astro';
+import NextRally from '../components/NextRally.astro';
+import WeeklyRide from '../components/WeeklyRide.astro';
 import { getPosts, paginate } from '../lib/site';
 
 const [first] = paginate(await getPosts(), '/');
 ---
 
-<Base>
-  <Fragment slot="hero">
-    <img class="hero" src="/wp-content/uploads/2014/11/cropped-cropped-deathrace-front11.jpg" alt="" loading="eager" />
-    <section class="jumbotron">
-      <h1>Minneapolis Minnesota's Premier Vintage Moped Club.</h1>
-      <p class="lead">
-        We organize Weekly Rides, Fix it Sessions, Moped Rallies and Races in the Twin Cities. The best way to get in
-        touch with us or meet up for a ride would be via the{' '}
-        <a href="https://www.facebook.com/groups/mnmopedriders/">Minnesota Moped Riders facebook group</a>. We try to
-        announce all the where's and when's of the ride details there. To sign up for our text service to be alerted
-        when weekly rides are announced simply text <a href="sms:+18335108834">+18335108834</a>
-      </p>
-    </section>
-  </Fragment>
-  <PostList posts={first.items} next={first.next} />
+<Base wide>
+  <section slot="hero" class="intro">
+    <h1>Minneapolis' Premier Vintage Moped Club</h1>
+    <p>Weekly rides, fix-it sessions, rallies and races all over the Twin Cities.</p>
+  </section>
+
+  <SocialHero />
+  <div class="home-row">
+    <NextRally />
+    <WeeklyRide />
+  </div>
+
+  <section class="home-posts" aria-labelledby="posts-heading">
+    <h2 id="posts-heading" class="section-title">Latest from the garage</h2>
+    <PostList posts={first.items} next={first.next} />
+  </section>
 </Base>

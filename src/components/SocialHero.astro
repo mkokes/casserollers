@@ -1,0 +1,58 @@
+---
+import QRCode from 'qrcode';
+import Icon from './Icon.astro';
+import { SOCIAL } from '../lib/site';
+
+// Rendered at build time, so the page needs no QR library at runtime.
+const qr = await QRCode.toString(SOCIAL.sms.href, {
+  type: 'svg',
+  margin: 1,
+  errorCorrectionLevel: 'M',
+  color: { dark: '#3b2014', light: '#fffaf0' },
+});
+
+const photos = [
+  '/wp-content/uploads/2014/09/10612559_10152253502307721_504701907656099987_n-150x150.jpg',
+  '/wp-content/uploads/2014/09/10575172_10202674769612093_704282121728396817_o-150x150.jpg',
+  '/wp-content/uploads/2014/09/10599361_732890420114873_6254022945536797568_n-150x150.jpg',
+  '/wp-content/uploads/2014/09/10245413_10204799789780276_8167760564227581756_n-150x150.jpg',
+];
+---
+
+<section class="social" aria-labelledby="social-heading">
+  <h2 id="social-heading" class="section-title">Find the gang</h2>
+  <div class="social-grid">
+    <article class="card card-instagram">
+      <h3><Icon name="instagram" size={26} /> Instagram</h3>
+      <p>Rally photos, raffle bike leaks and garage builds.</p>
+      <a class="photo-strip" href={SOCIAL.instagram.href} aria-label={`${SOCIAL.instagram.handle} on Instagram`}>
+        {photos.map((src) => <img src={src} alt="" width="150" height="150" loading="lazy" />)}
+      </a>
+      <a class="button" href={SOCIAL.instagram.href}>Follow {SOCIAL.instagram.handle}</a>
+    </article>
+
+    <article class="card card-facebook">
+      <h3><Icon name="facebook" size={26} /> Facebook group</h3>
+      <p>
+        Ride times, meetup spots and moped talk all happen in the <strong>{SOCIAL.facebook.name}</strong> group. Ask
+        questions, sell parts, find a riding buddy.
+      </p>
+      <a class="button" href={SOCIAL.facebook.href}>Join the group</a>
+    </article>
+
+    <article class="card card-sms">
+      <h3><Icon name="sms" size={26} /> Text alerts</h3>
+      <p>
+        Get a text when rides and rallies are announced. Text <strong>{SOCIAL.sms.keyword}</strong> to{' '}
+        <a href={SOCIAL.sms.href}>{SOCIAL.sms.display}</a>.
+      </p>
+      <div class="sms-actions">
+        <a class="button" href={SOCIAL.sms.href}>Text {SOCIAL.sms.keyword}</a>
+        <figure class="qr">
+          <Fragment set:html={qr} />
+          <figcaption>Scan with your phone camera</figcaption>
+        </figure>
+      </div>
+    </article>
+  </div>
+</section>

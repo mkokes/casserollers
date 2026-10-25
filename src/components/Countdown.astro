@@ -1,0 +1,39 @@
+---
+// "23 days to go". Rendered at build time, then refreshed in the browser so a
+// page built (or cached by the service worker) weeks ago still reads right.
+import { rallyEnd, rallyOver, rallyStart, type Rally } from '../lib/site';
+
+interface Props {
+  rally: Rally;
+}
+
+const { rally } = Astro.props;
+const start = rallyStart(rally);
+const end = rallyEnd(rally);
+
+function label(now: Date) {
+  if (end < now) return "That's a wrap";
+  const days = Math.ceil((start.valueOf() - now.valueOf()) / 86_400_000);
+  if (days <= 0) return 'Happening now!';
+  return days === 1 ? 'Tomorrow!' : `${days} days to go`;
+}
+---
+
+{
+  !rallyOver(rally) && (
+    <p class="countdown" data-start={start.toISOString()} data-end={end.toISOString()}>
+      {label(new Date())}
+    </p>
+  )
+}
+
+<script>
+  for (const el of document.querySelectorAll<HTMLElement>('.countdown')) {
+    const now = Date.now();
+    const start = Date.parse(el.dataset.start!);
+    const end = Date.parse(el.dataset.end!);
+    const days = Math.ceil((start - now) / 86_400_000);
+    el.textContent =
+      end < now ? "That's a wrap" : days <= 0 ? 'Happening now!' : days === 1 ? 'Tomorrow!' : `${days} days to go`;
+  }
+</script>

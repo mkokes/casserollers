@@ -4,7 +4,10 @@
 import { getCollection, render } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import PostEntry from '../components/PostEntry.astro';
-import { getPosts } from '../lib/site';
+import Countdown from '../components/Countdown.astro';
+import RallyActions from '../components/RallyActions.astro';
+import RallySchedule from '../components/RallySchedule.astro';
+import { formatDateRange, getPosts, rallyOver, type Rally } from '../lib/site';
 
 export async function getStaticPaths() {
   const trim = (path: string) => path.replace(/^\/|\/$/g, '');
@@ -23,16 +26,28 @@ const props = Astro.props;
 const { title, excerpt } = props.entry.data;
 const image = props.kind === 'post' ? props.entry.data.featuredImage : undefined;
 const { Content } = props.kind === 'page' ? await render(props.entry) : { Content: null };
+const rally = props.kind === 'page' && props.entry.data.rally ? (props.entry as Rally) : undefined;
 ---
 
-<Base title={title} description={excerpt} image={image}>
+<Base title={title} description={excerpt} image={image ?? rally?.data.rally.poster}>
   {
     props.kind === 'post' ? (
       <PostEntry post={props.entry} heading="h1" />
     ) : (
       <article class="entry">
         <h1 class="entry-title">{title}</h1>
+        {rally && (
+          <header class="rally-header">
+            <p class="rally-dates">
+              {formatDateRange(rally.data.rally.start, rally.data.rally.end)} · Minneapolis
+              {rallyOver(rally) && <span class="badge">Past rally</span>}
+            </p>
+            <Countdown rally={rally} />
+            {!rallyOver(rally) && <RallyActions rally={rally} />}
+          </header>
+        )}
         <div class="entry-content">{Content && <Content />}</div>
+        {rally && <RallySchedule rally={rally} />}
       </article>
     )
   }

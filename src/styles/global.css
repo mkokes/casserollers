@@ -1,15 +1,21 @@
-/* Recreates the look of the old Matheson WordPress theme. */
+/* Retro 70s moped-brochure look: cream paper, brown ink, orange and mustard stripes. */
 :root {
-  --bg: #eee;
-  --surface: #fff;
-  --text: #333;
-  --muted: #777;
-  --link: #791315;
-  --link-hover: #ab6163;
-  --rule: #ddd;
-  --heading-font: 'Raleway', sans-serif;
-  --body-font: 'Open Sans', sans-serif;
+  --cream: #f6ead3;
+  --paper: #fffaf0;
+  --orange: #e2701c;
+  --mustard: #f2b33d;
+  --brown: #5a3220;
+  --ink: #3b2014;
+  --muted: #7a5a45;
+  --link: #a8430f;
+  --link-hover: #5a3220;
+  --rule: #e2cfae;
+  --heading-font: 'Shrikhand', 'Cooper Black', Georgia, serif;
+  --body-font: 'Rubik', system-ui, sans-serif;
   --content-width: 760px;
+  --wide-width: 1120px;
+  --radius: 18px;
+  --shadow: 6px 6px 0 var(--brown);
 }
 
 *,
@@ -20,19 +26,21 @@
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font: 16px/1.6 var(--body-font);
+  background: var(--cream);
+  color: var(--ink);
+  font: 17px/1.6 var(--body-font);
 }
 
 a {
   color: var(--link);
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
 }
 a:hover,
 a:focus {
   color: var(--link-hover);
-  text-decoration: underline;
+  text-decoration-thickness: 2px;
 }
 
 h1,
@@ -43,7 +51,8 @@ h5,
 h6 {
   font-family: var(--heading-font);
   font-weight: 400;
-  line-height: 1.2;
+  line-height: 1.15;
+  color: var(--brown);
 }
 
 img,
@@ -55,10 +64,12 @@ img {
   height: auto;
 }
 
+.icon {
+  flex: none;
+  vertical-align: -0.2em;
+}
+
 #page {
-  max-width: 1200px;
-  margin: 0 auto;
-  background: var(--surface);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -71,68 +82,499 @@ img {
 .skip-link:focus {
   left: 1rem;
   top: 1rem;
-  background: var(--surface);
+  background: var(--paper);
   padding: 0.5rem 1rem;
-  z-index: 10;
+  z-index: 1000;
+}
+
+/* Racing stripes: orange, mustard, brown */
+.stripes {
+  height: 24px;
+  background: linear-gradient(
+    var(--orange) 0 33.33%,
+    var(--mustard) 33.33% 66.66%,
+    var(--brown) 66.66%
+  );
+}
+/* Mirror the footer's stripes so brown meets brown. */
+.stripes:has(+ .site-footer) {
+  transform: scaleY(-1);
 }
 
 /* Header */
 .site-header {
-  text-align: center;
-  padding: 2.5rem 1rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  padding: 1.25rem max(1rem, calc((100% - var(--wide-width)) / 2));
+  background: var(--brown);
+  color: var(--cream);
 }
 .site-title {
   margin: 0;
-  font: 400 clamp(2.5rem, 7vw, 3.75rem) / 1.1 var(--heading-font);
+  font: 400 clamp(2.25rem, 7vw, 3.25rem) / 1 var(--heading-font);
 }
 .site-title a {
-  color: var(--text);
+  color: var(--cream);
   text-decoration: none;
+  text-shadow: 3px 3px 0 var(--orange);
 }
 .site-description {
-  margin: 0.25rem 0 0;
-  font-size: 0.875rem;
+  margin: 0.35rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mustard);
 }
 .site-header nav ul {
   display: flex;
-  justify-content: space-around;
   flex-wrap: wrap;
-  gap: 0.5rem 2rem;
+  gap: 0.5rem;
   list-style: none;
-  margin: 3rem 0 0;
-  padding: 0 0 1.5rem;
+  margin: 0;
+  padding: 0;
 }
 .site-header nav a {
-  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.9rem;
+  border: 2px solid var(--mustard);
+  border-radius: 999px;
+  color: var(--cream);
+  font-weight: 500;
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+.site-header nav a:hover,
+.site-header nav a:focus {
+  background: var(--mustard);
+  color: var(--ink);
+}
+
+/* Buttons and cards */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.6rem 1.25rem;
+  border: 3px solid var(--brown);
+  border-radius: 999px;
+  background: var(--orange);
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 3px 3px 0 var(--brown);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.button:hover,
+.button:focus {
+  color: var(--ink);
+  background: var(--mustard);
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--brown);
+}
+.button:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 var(--brown);
+}
+.button-big {
+  padding: 0.8rem 1.6rem;
+  font-size: 1.0625rem;
+}
+.button-outline {
+  background: var(--paper);
+}
+.button-disabled,
+.button-disabled:hover {
+  background: var(--rule);
+  color: var(--muted);
+  box-shadow: none;
+  transform: none;
+  cursor: default;
+}
+
+.card {
+  background: var(--paper);
+  border: 3px solid var(--brown);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+}
+.card h2,
+.card h3 {
+  margin: 0 0 0.5rem;
+}
+.card h2 a,
+.card h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+.card > :last-child {
+  margin-bottom: 0;
+}
+
+.section-title {
+  margin: 2.5rem 0 1.25rem;
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+  text-align: center;
+}
+.eyebrow {
+  margin: 0 0 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  font-size: 0.875rem;
+  color: var(--orange);
+}
+.badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  background: var(--brown);
+  color: var(--cream);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  vertical-align: 0.15em;
 }
 
 /* Home page */
-.hero {
+.intro {
+  padding: clamp(3rem, 10vw, 6rem) 1rem;
+  text-align: center;
+  color: var(--cream);
+  background:
+    linear-gradient(rgb(226 112 28 / 0.78), rgb(90 50 32 / 0.88)),
+    url('/wp-content/uploads/2014/11/cropped-cropped-deathrace-front11.jpg') center / cover;
+}
+.intro h1 {
+  max-width: 18ch;
+  margin: 0 auto;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  color: var(--cream);
+  text-shadow: 3px 3px 0 var(--brown);
+}
+.intro p {
+  margin: 1rem auto 0;
+  max-width: 40ch;
+  font-size: 1.125rem;
+}
+
+.social-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 1.75rem;
+}
+.social-grid .card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.social-grid .card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.5rem;
+}
+.social-grid .card p {
+  margin-top: 0;
+}
+.social-grid .card > .button {
+  margin-top: auto;
+}
+.photo-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+  width: 100%;
+  margin-bottom: 1.25rem;
+}
+.photo-strip img {
   display: block;
   width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--brown);
 }
-.jumbotron {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+.card-instagram {
+  border-top: 12px solid var(--orange);
+}
+.card-facebook {
+  border-top: 12px solid var(--mustard);
+}
+.card-sms {
+  border-top: 12px solid var(--brown);
+}
+.sms-actions {
+  display: flex;
   align-items: center;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 3.5rem 1.5rem 2rem;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  margin-top: auto;
 }
-.jumbotron h1 {
+.qr {
   margin: 0;
-  padding: 1.5rem 0;
   text-align: center;
-  font-size: 2rem;
-  border-image: linear-gradient(to right, transparent 20%, var(--text) 20% 80%, transparent 80%) 1;
-  border-width: 1px 0;
-  border-style: solid;
 }
-.jumbotron .lead {
+.qr svg {
+  display: block;
+  width: 120px;
+  height: 120px;
+  border: 2px solid var(--brown);
+  border-radius: 8px;
+}
+.qr figcaption {
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+/* A QR code is pointless on the phone you'd scan it with. */
+@media (pointer: coarse) and (max-width: 700px) {
+  .qr {
+    display: none;
+  }
+}
+
+.home-row {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 1.75rem;
+  margin-top: 2.5rem;
+}
+.home-posts {
+  max-width: var(--content-width);
+  margin: 2rem auto 0;
+}
+
+/* Rallies */
+.rally-feature {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+.rally-feature > div {
+  flex: 1 1 260px;
+}
+.rally-poster {
+  flex: 0 1 170px;
+}
+.rally-poster img {
+  display: block;
+  border-radius: 10px;
+  border: 3px solid var(--brown);
+}
+.rally-feature h2 {
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+}
+.rally-dates {
+  margin: 0 0 0.5rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+.countdown {
+  display: inline-block;
+  margin: 0 0 1rem;
+  padding: 0.3rem 0.9rem;
+  border-radius: 8px;
+  background: var(--mustard);
+  border: 2px solid var(--brown);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.rally-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+.rally-tba h2 {
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+}
+.weekly-ride {
+  background: var(--mustard);
+}
+.weekly-ride .eyebrow {
+  color: var(--brown);
+}
+.weekly-ride h2 {
+  font-size: clamp(1.75rem, 5vw, 2.25rem);
+}
+.weekly-ride a {
+  color: var(--ink);
+}
+.ride-place {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+}
+
+.rally-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.rally-header .rally-actions {
+  justify-content: center;
+}
+.rally-schedule,
+.rally-stops {
+  margin-top: 2.5rem;
+}
+.rally-schedule h2,
+.rally-stops h2 {
+  font-size: 2rem;
+}
+.rally-schedule h3 {
+  margin: 1.5rem 0 0.5rem;
+  font-family: var(--body-font);
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--orange);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.schedule-day {
+  list-style: none;
   margin: 0;
+  padding: 0;
+  border: 3px solid var(--brown);
+  border-radius: var(--radius);
+  background: var(--paper);
+  overflow: hidden;
+}
+.schedule-day li {
+  display: grid;
+  grid-template-columns: 9.5rem 1fr;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+}
+.schedule-day li + li {
+  border-top: 2px dashed var(--rule);
+}
+.schedule-day time {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.schedule-stop {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.pin-number,
+.map-pin span {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  background: var(--orange);
+  border: 2px solid var(--brown);
+  color: var(--ink);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+.rally-map {
+  height: 340px;
+  border: 3px solid var(--brown);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 0;
+}
+.map-pin {
+  background: none;
+  border: 0;
+}
+.map-pin span {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  font-size: 0.9375rem;
+  box-shadow: 2px 2px 0 var(--brown);
+}
+/* The pin's point */
+.map-pin span::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border: 6px solid transparent;
+  border-top: 9px solid var(--brown);
+}
+.stop-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+}
+.stop-list li {
+  display: flex;
+  gap: 0.6rem;
+  line-height: 1.5;
+}
+
+.rally-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 1.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.rally-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  height: 100%;
+  padding: 0.75rem;
+  background: var(--paper);
+  border: 3px solid var(--brown);
+  border-radius: var(--radius);
+  color: var(--ink);
+  text-decoration: none;
+}
+.rally-tile:hover,
+.rally-tile:focus {
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.rally-tile img {
+  border-radius: 8px;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  margin-bottom: 0.25rem;
+}
+.rally-tile strong {
+  font-family: var(--heading-font);
+  font-weight: 400;
+  font-size: 1.25rem;
+  color: var(--brown);
+}
+.rally-tile span {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+.rally-more {
+  margin-top: 2rem;
+  text-align: center;
+}
+main > .card + .section-title {
+  margin-top: 3rem;
 }
 
 /* Posts and pages */
@@ -141,11 +583,14 @@ main {
   width: 100%;
   max-width: calc(var(--content-width) + 2rem);
   margin: 0 auto;
-  padding: 1rem;
+  padding: 1rem 1rem 3rem;
+}
+main.wide {
+  max-width: calc(var(--wide-width) + 2rem);
 }
 .entry {
   padding: 2rem 0 3rem;
-  border-bottom: 1px solid var(--rule);
+  border-bottom: 3px dotted var(--rule);
 }
 .entry:last-of-type {
   border-bottom: 0;
@@ -153,15 +598,18 @@ main {
 .entry-title,
 .archive-title {
   text-align: center;
-  font-size: 2rem;
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
   margin: 0 0 0.5rem;
 }
 .entry-title a {
-  color: var(--text);
+  color: var(--brown);
+  text-decoration: none;
+}
+.entry-title a:hover {
+  color: var(--orange);
 }
 .archive-title {
   margin-top: 2rem;
-  color: var(--muted);
 }
 .entry-meta,
 .entry-tags {
@@ -175,6 +623,13 @@ main {
 }
 .entry-content {
   overflow-wrap: break-word;
+}
+.entry-content h2,
+.entry-content h3 {
+  margin-top: 2rem;
+}
+.entry-content img {
+  border-radius: 6px;
 }
 .entry-content iframe {
   display: block;
@@ -197,7 +652,7 @@ main {
 .entry-content blockquote {
   margin: 1rem 0;
   padding-left: 1rem;
-  border-left: 3px solid var(--rule);
+  border-left: 4px solid var(--orange);
   color: var(--muted);
 }
 
@@ -265,17 +720,44 @@ figcaption {
 .pagination {
   display: flex;
   justify-content: space-between;
+  gap: 1rem;
   padding: 1.5rem 0 2rem;
-  font-family: var(--heading-font);
+  font-weight: 700;
 }
 
 /* Footer */
 .site-footer {
-  text-align: center;
   padding: 2rem 1rem;
+  text-align: center;
   font-size: 0.875rem;
-  color: var(--muted);
-  border-top: 1px solid var(--rule);
+  background: var(--brown);
+  color: var(--cream);
+}
+.site-footer a {
+  color: var(--cream);
+}
+.site-footer a:hover,
+.site-footer a:focus {
+  color: var(--mustard);
+}
+.footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem 2rem;
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  font-size: 1rem;
+}
+.footer-social a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.site-footer p {
+  margin: 0;
+  color: var(--rule);
 }
 
 /* Lightbox */
@@ -287,7 +769,7 @@ figcaption {
   max-height: 95vh;
 }
 #lightbox::backdrop {
-  background: rgb(0 0 0 / 0.85);
+  background: rgb(59 32 20 / 0.92);
 }
 #lightbox img {
   display: block;
@@ -301,17 +783,25 @@ figcaption {
   right: 1rem;
   background: none;
   border: 0;
-  color: #fff;
+  color: var(--cream);
   font-size: 2.5rem;
   line-height: 1;
   cursor: pointer;
 }
 
-@media (max-width: 700px) {
-  .jumbotron {
+@media (max-width: 800px) {
+  .home-row {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
-    padding-top: 2rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .site-header {
+    justify-content: center;
+    text-align: center;
+  }
+  .site-header nav ul {
+    justify-content: center;
   }
   .gallery {
     --cols: 2 !important;
@@ -320,5 +810,19 @@ figcaption {
   .alignright {
     float: none;
     margin: 1rem auto;
+  }
+  .schedule-day li {
+    grid-template-columns: 1fr;
+    gap: 0.1rem;
+  }
+  .rally-poster {
+    flex-basis: 100%;
+    max-width: 220px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
   }
 }

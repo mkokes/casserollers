@@ -1,0 +1,54 @@
+---
+import Countdown from './Countdown.astro';
+import RallyActions from './RallyActions.astro';
+import { formatDateRange, getRallies, nextRally, SOCIAL } from '../lib/site';
+
+const rallies = await getRallies();
+const next = nextRally(rallies);
+const latest = rallies.find((rally) => rally !== next);
+---
+
+<section class="next-rally card card-wide" aria-labelledby="next-rally-heading">
+  {
+    next ? (
+      <div class="rally-feature">
+        {next.data.rally.poster && (
+          <a href={next.data.path} class="rally-poster">
+            <img src={next.data.rally.poster} alt={`${next.data.title} poster`} loading="lazy" />
+          </a>
+        )}
+        <div>
+          <p class="eyebrow">Next rally</p>
+          <h2 id="next-rally-heading">
+            <a href={next.data.path}>{next.data.title}</a>
+          </h2>
+          <p class="rally-dates">{formatDateRange(next.data.rally.start, next.data.rally.end)} · Minneapolis</p>
+          <Countdown rally={next} />
+          <RallyActions rally={next} details />
+        </div>
+      </div>
+    ) : (
+      <div class="rally-tba">
+        <p class="eyebrow">Next rally</p>
+        <h2 id="next-rally-heading">Coming soon</h2>
+        <p>
+          We're cooking up the next one. Text <strong>{SOCIAL.sms.keyword}</strong> to{' '}
+          <a href={SOCIAL.sms.href}>{SOCIAL.sms.display}</a> to hear first.
+        </p>
+        <div class="rally-actions">
+          <a class="button button-big" href={SOCIAL.sms.href}>
+            Text {SOCIAL.sms.keyword}
+          </a>
+          {latest && (
+            <a class="button button-outline" href={latest.data.path}>
+              Last time: {latest.data.title}
+            </a>
+          )}
+          <a class="button button-outline" href="/rallies/">
+            All rallies
+          </a>
+        </div>
+      </div>
+    )
+  }
+</section>
