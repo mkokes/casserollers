@@ -4,7 +4,7 @@
 // - Hashed build assets (/_astro/) and fonts: cache first, they never change.
 // - Images: cache first, capped so a long browse doesn't fill the device.
 // Bump VERSION when changing this file's caching logic to drop old caches.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const PAGES = `pages-${VERSION}`;
 const ASSETS = `assets-${VERSION}`;
 const IMAGES = `images-${VERSION}`;

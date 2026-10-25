@@ -1,0 +1,95 @@
+---
+import Icon from './Icon.astro';
+import { formatTime, formatWeekday, type Rally } from '../lib/site';
+
+interface Props {
+  rally: Rally;
+}
+
+const { stops, schedule } = Astro.props.rally.data.rally;
+const days = Map.groupBy(schedule, (item) => item.date);
+const stopNumber = (name?: string) => stops.findIndex((stop) => stop.name === name) + 1;
+---
+
+{
+  schedule.length > 0 && (
+    <section class="rally-schedule" aria-labelledby="schedule-heading">
+      <h2 id="schedule-heading">Schedule</h2>
+      {[...days].map(([date, items]) => (
+        <>
+          <h3>{formatWeekday(date)}</h3>
+          <ol class="schedule-day">
+            {items.map((item) => (
+              <li>
+                <time>
+                  {formatTime(item.time)}
+                  {item.until && <> – {formatTime(item.until)}</>}
+                </time>
+                <span>
+                  {item.title}
+                  {item.stop && (
+                    <span class="schedule-stop">
+                      {stopNumber(item.stop) > 0 && <span class="pin-number">{stopNumber(item.stop)}</span>}
+                      {item.stop}
+                    </span>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </>
+      ))}
+    </section>
+  )
+}
+{
+  stops.length > 0 && (
+    <section class="rally-stops" aria-labelledby="stops-heading">
+      <h2 id="stops-heading">Where</h2>
+      <div class="rally-map" data-stops={JSON.stringify(stops)} role="img" aria-label="Map of rally locations" />
+      <ol class="stop-list">
+        {stops.map((stop, i) => (
+          <li>
+            <span class="pin-number">{i + 1}</span>
+            <span>
+              <strong>{stop.name}</strong>
+              <br />
+              {stop.address}
+              <br />
+              <a href={stop.mapUrl}>
+                <Icon name="pin" size={16} /> Directions
+              </a>
+            </span>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
+<script>
+  import L from 'leaflet';
+  import 'leaflet/dist/leaflet.css';
+
+  type Stop = { name: string; lat: number; lng: number };
+
+  for (const el of document.querySelectorAll<HTMLElement>('.rally-map')) {
+    const stops: Stop[] = JSON.parse(el.dataset.stops!);
+    const map = L.map(el, { scrollWheelZoom: false });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    }).addTo(map);
+    // Numbered CSS pins instead of Leaflet's default marker images, which
+    // don't survive bundling.
+    const markers = stops.map((stop, i) =>
+      L.marker([stop.lat, stop.lng], {
+        title: stop.name,
+        icon: L.divIcon({ className: 'map-pin', html: `<span>${i + 1}</span>`, iconSize: [32, 44], iconAnchor: [16, 44], popupAnchor: [0, -40] }),
+      })
+        .bindPopup(stop.name)
+        .addTo(map),
+    );
+    map.fitBounds(L.featureGroup(markers).getBounds(), { padding: [40, 40], maxZoom: 15 });
+  }
+</script>

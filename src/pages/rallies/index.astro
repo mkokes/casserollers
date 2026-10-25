@@ -1,0 +1,63 @@
+---
+import Base from '../../layouts/Base.astro';
+import Countdown from '../../components/Countdown.astro';
+import RallyActions from '../../components/RallyActions.astro';
+import { formatDateRange, getRallies, rallyOver, SOCIAL } from '../../lib/site';
+
+const rallies = await getRallies();
+const upcoming = rallies.filter((rally) => !rallyOver(rally)).reverse();
+const past = rallies.filter((rally) => rallyOver(rally));
+---
+
+<Base title="Rallies" description="Casserollers moped rallies in Minneapolis: dates, schedules and registration.">
+  <h1 class="archive-title">Rallies</h1>
+
+  {
+    upcoming.length > 0 ? (
+      upcoming.map((rally) => (
+        <article class="card rally-feature">
+          {rally.data.rally.poster && (
+            <a href={rally.data.path} class="rally-poster">
+              <img src={rally.data.rally.poster} alt={`${rally.data.title} poster`} />
+            </a>
+          )}
+          <div>
+            <h2>
+              <a href={rally.data.path}>{rally.data.title}</a>
+            </h2>
+            <p class="rally-dates">{formatDateRange(rally.data.rally.start, rally.data.rally.end)}</p>
+            <Countdown rally={rally} />
+            <RallyActions rally={rally} details />
+          </div>
+        </article>
+      ))
+    ) : (
+      <article class="card rally-tba">
+        <h2>Next rally TBA</h2>
+        <p>
+          Text <strong>{SOCIAL.sms.keyword}</strong> to <a href={SOCIAL.sms.href}>{SOCIAL.sms.display}</a> and you'll
+          be the first to know.
+        </p>
+      </article>
+    )
+  }
+
+  <h2 class="section-title">Past rallies</h2>
+  <ul class="rally-grid">
+    {
+      past.map((rally) => (
+        <li>
+          <a href={rally.data.path} class="rally-tile">
+            {rally.data.rally.poster && <img src={rally.data.rally.poster} alt="" loading="lazy" />}
+            <strong>{rally.data.title}</strong>
+            <span>{formatDateRange(rally.data.rally.start, rally.data.rally.end)}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="rally-more">
+    Going way back: photos and videos from <a href="/leftovers/totfest-media/">TotFest</a>, plus every old rally post in{' '}
+    <a href="/category/casseroller-news/">Casseroller News</a>.
+  </p>
+</Base>

@@ -34,7 +34,26 @@ Post body in Markdown. Put images in `public/images/` and reference them as `/im
 
 `path` is the post's URL. Existing posts keep the WordPress `/YYYY/MM/slug/` pattern, so new ones should follow it. Categories and tags are slugs from `src/data/terms.json`.
 
-Pages (About, Leftovers, etc.) live in `src/content/pages/`, with the folder structure matching the URL. The menu and the home page intro are in `src/lib/site.ts` and `src/pages/index.astro`.
+Pages (About, Leftovers, etc.) live in `src/content/pages/`, with the folder structure matching the URL. The menu, social links, text-alert number and weekly ride details are in `src/lib/site.ts`; the home page layout is `src/pages/index.astro`.
+
+## Adding a rally
+
+A rally is a page with a `rally` block in its frontmatter (see `src/content/pages/hot-dish-deathwish.md`). It then shows up on the home page while it's upcoming, on `/rallies/`, and gets a countdown, schedule, map and an "Add to calendar" file at `/rallies/<slug>.ics`.
+
+```yaml
+rally:
+  start: "2027-06-18"          # Minneapolis dates, YYYY-MM-DD
+  end: "2027-06-20"
+  poster: "/images/poster.jpg"
+  registerUrl: "https://..."   # leave out until registration opens ("Registration opens soon")
+  facebookEvent: "https://www.facebook.com/events/..."
+  stops:
+    - { name: "NE Yacht Club", address: "801 Marshall St NE, Minneapolis, MN 55413", lat: 44.9954, lng: -93.2664, mapUrl: "https://maps.app.goo.gl/..." }
+  schedule:
+    - { date: "2027-06-18", time: "19:00", until: "23:00", title: "Night ride", stop: "NE Yacht Club" }
+```
+
+Times are 24-hour Minneapolis time. `stop` must match a stop's `name`. Get `lat`/`lng` by right-clicking the spot in Google Maps.
 
 ## Installable app (PWA)
 

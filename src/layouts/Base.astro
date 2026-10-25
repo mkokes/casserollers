@@ -1,15 +1,18 @@
 ---
 import '../styles/global.css';
-import { NAV, SITE_DESCRIPTION, SITE_TITLE } from '../lib/site';
+import Icon from '../components/Icon.astro';
+import { NAV, SITE_DESCRIPTION, SITE_TITLE, SOCIAL } from '../lib/site';
 
 interface Props {
   title?: string;
   description?: string;
   image?: string;
   noindex?: boolean;
+  // Let the main column span the full page width (the home page's cards).
+  wide?: boolean;
 }
 
-const { title, description = SITE_DESCRIPTION, image, noindex = false } = Astro.props;
+const { title, description = SITE_DESCRIPTION, image, noindex = false, wide = false } = Astro.props;
 const fullTitle = title ? `${title} - ${SITE_TITLE}` : `${SITE_TITLE} - ${SITE_DESCRIPTION}`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(image, Astro.site) : undefined;
@@ -28,7 +31,7 @@ const ogImage = image ? new URL(image, Astro.site) : undefined;
     <link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <meta name="theme-color" content="#791315" />
+    <meta name="theme-color" content="#5a3220" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content={SITE_TITLE} />
     <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href="/feed.xml" />
@@ -42,7 +45,7 @@ const ogImage = image ? new URL(image, Astro.site) : undefined;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,700;1,400&family=Raleway:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400;0,500;0,700;1,400&family=Shrikhand&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -50,20 +53,38 @@ const ogImage = image ? new URL(image, Astro.site) : undefined;
     <div id="page">
       <a class="skip-link" href="#primary">Skip to content</a>
       <header class="site-header">
-        <p class="site-title"><a href="/" rel="home">{SITE_TITLE}</a></p>
-        <p class="site-description">{SITE_DESCRIPTION}</p>
+        <div class="site-brand">
+          <p class="site-title"><a href="/" rel="home">{SITE_TITLE}</a></p>
+          <p class="site-description">{SITE_DESCRIPTION}</p>
+        </div>
         <nav aria-label="Main menu">
           <ul>
-            {NAV.map((item) => <li><a href={item.href}>{item.label}</a></li>)}
+            {
+              NAV.map((item) => (
+                <li>
+                  <a href={item.href}>
+                    {item.icon && <Icon name={item.icon} size={18} />}
+                    {item.label}
+                  </a>
+                </li>
+              ))
+            }
           </ul>
         </nav>
       </header>
+      <div class="stripes" aria-hidden="true"></div>
       <slot name="hero" />
-      <main id="primary">
+      <main id="primary" class:list={{ wide }}>
         <slot />
       </main>
+      <div class="stripes" aria-hidden="true"></div>
       <footer class="site-footer">
-        Copyright &copy; {new Date().getFullYear()} <a href="/">{SITE_TITLE}</a>. All Rights Reserved.
+        <ul class="footer-social">
+          <li><a href={SOCIAL.instagram.href}><Icon name="instagram" /> {SOCIAL.instagram.handle}</a></li>
+          <li><a href={SOCIAL.facebook.href}><Icon name="facebook" /> {SOCIAL.facebook.name}</a></li>
+          <li><a href={SOCIAL.sms.href}><Icon name="sms" /> Text {SOCIAL.sms.keyword} to {SOCIAL.sms.display}</a></li>
+        </ul>
+        <p>Copyright &copy; {new Date().getFullYear()} <a href="/">{SITE_TITLE}</a>. All Rights Reserved.</p>
       </footer>
     </div>
 

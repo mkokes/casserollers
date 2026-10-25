@@ -1,0 +1,18 @@
+---
+import Icon from './Icon.astro';
+import { SOCIAL, WEEKLY_RIDE } from '../lib/site';
+---
+
+<section class="weekly-ride card card-wide" aria-labelledby="weekly-ride-heading">
+  <p class="eyebrow">Ride with us</p>
+  <h2 id="weekly-ride-heading">{WEEKLY_RIDE.day} · {WEEKLY_RIDE.time}</h2>
+  <p class="ride-place">
+    <Icon name="pin" size={20} />
+    <a href={WEEKLY_RIDE.mapUrl}>{WEEKLY_RIDE.place}, {WEEKLY_RIDE.address}</a>
+  </p>
+  <p>
+    Most weeks we meet at the Yacht Club and ride from there. Spots change sometimes, so{' '}
+    <a href={SOCIAL.sms.href}>text {SOCIAL.sms.keyword} to {SOCIAL.sms.display}</a> for location updates. New riders are always
+    welcome.
+  </p>
+</section>
