@@ -78,3 +78,9 @@ Pushing to `master` runs `.github/workflows/deploy.yml`, which builds and publis
 | `src/layouts/Base.astro`, `src/styles/global.css` | Header, footer, lightbox, service worker registration, styling |
 | `scripts/import-wp.mjs` | One-time importer from the WordPress REST API (only useful while the old site is still up) |
 | `scripts/check-urls.mjs` | Build verification against `scripts/wp-urls.json` |
+
+## License
+
+Copyright (C) 2018-2026 Marty Kokes
+
+Licensed under the GNU General Public License v3.0 or later. See [LICENSE](LICENSE).
