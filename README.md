@@ -12,6 +12,7 @@ Requires Node 24 (`nvm use` picks it up from `.nvmrc`).
 npm install
 npm run dev        # http://localhost:4321
 npm run build      # outputs to dist/
+npm run preview    # serve the built site
 npm run check-urls # after a build: every old WordPress URL exists, no broken local links/images
 ```
 
@@ -29,7 +30,7 @@ categories:
   - "casseroller-news"
 ---
 
-Post body in Markdown. Put images in `public/images/` and reference them as `/images/photo.jpg`.
+Post body in Markdown. Put new images in `public/images/` (create it if needed) and reference them as `/images/photo.jpg`.
 ```
 
 `path` is the post's URL. Existing posts keep the WordPress `/YYYY/MM/slug/` pattern, so new ones should follow it. Categories and tags are slugs from `src/data/terms.json`.
@@ -65,19 +66,23 @@ The site can be installed to a phone's home screen and works offline for pages a
 
 ## Deploying
 
-Pushing to `master` runs `.github/workflows/deploy.yml`, which builds and publishes to GitHub Pages. `public/CNAME` sets the custom domain.
+Pushing to `master` runs `.github/workflows/deploy.yml`, which builds and publishes to GitHub Pages and purges the Cloudflare cache (when `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ZONE_ID` are configured). `public/CNAME` sets the custom domain.
 
 ## Layout
 
 | Path | What |
 | --- | --- |
 | `src/content/posts/`, `src/content/pages/` | Content (Markdown) |
+| `src/data/terms.json`, `src/lib/site.ts` | Category/tag labels, site metadata, nav, social/SMS links, weekly ride and rally helpers |
+| `src/components/` | Home cards (`SocialHero`, `NextRally`, `WeeklyRide`), rally UI (`Countdown`, `RallyActions`, `RallySchedule`), posts and icons |
 | `public/wp-content/uploads/` | Images from WordPress, kept at their original URLs |
 | `src/pages/[...path].astro` | Renders every post and page at its `path` |
 | `src/pages/index.astro`, `page/`, `category/`, `tag/` | Home and archive listings (5 per page, like the old site) |
+| `src/pages/rallies/`, `feed.xml.ts`, `offline.astro`, `404.astro` | Rallies index & `.ics` calendar feeds, RSS feed, offline fallback and 404 page |
 | `src/layouts/Base.astro`, `src/styles/global.css` | Header, footer, lightbox, service worker registration, styling |
 | `scripts/import-wp.mjs` | One-time importer from the WordPress REST API (only useful while the old site is still up) |
 | `scripts/check-urls.mjs` | Build verification against `scripts/wp-urls.json` |
+| `scripts/build-icons.mjs` | Generates PWA/favicon PNGs from `public/icons/icon.svg` |
 
 ## License
 
